@@ -222,12 +222,22 @@
   @media (max-width: 640px) {
     body { padding-bottom:calc(66px + env(safe-area-inset-bottom,0px)); }
     .gutter { padding-left:12px; padding-right:12px; }
-    .hero .gutter { padding-top:76px; padding-bottom:38px; }
-    .hero .gutter > div:first-child h1 { font-size:clamp(3rem,14vw,4.5rem); }
-    .hero .gutter > div:last-child { max-width:360px; }
-    .hero-img { max-height:330px; object-fit:contain; }
-    .hero .gutter { gap:10px; }
+    .hero .gutter { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr); grid-template-areas:"copy art"; align-items:center; gap:4px; padding-top:30px; padding-bottom:26px; }
+    .hero-copy { grid-area:copy; position:relative; z-index:3; }
+    .hero-art { grid-area:art; width:100%; max-width:none; align-self:center; margin:0; }
+    .hero .eyebrow { font-size:8px; letter-spacing:.13em; line-height:1.5; }
+    .hero .hero-copy h1 { font-size:clamp(2.25rem,10vw,3.2rem); line-height:.92; margin-top:9px; }
+    .hero .hero-copy h1 svg { width:25px; height:25px; }
+    .hero .hero-copy > p:nth-of-type(2) { font-size:17px; line-height:1.1; margin-top:10px; }
+    .hero-description { display:none; }
+    .hero .hero-copy > div:last-child { display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:16px; }
+    .hero .hero-copy > div:last-child a { padding:10px 11px; font-size:11px; white-space:nowrap; }
+    .hero-img { width:100%; max-height:270px; height:270px; object-fit:cover; object-position:center; animation:none; -webkit-mask-image:radial-gradient(ellipse 75% 70% at 50% 50%,#000 68%,transparent 100%); mask-image:radial-gradient(ellipse 75% 70% at 50% 50%,#000 68%,transparent 100%); }
+    .hero-art > p { display:none; }
+    .drip { height:65px; opacity:.8; }
     .category-grid { gap:8px; }
+    .category-card { aspect-ratio:1/1.08; }
+    .category-grid + * { margin-top:0; }
     #menu { padding-top:36px; padding-bottom:40px; }
     #menu .mt-8.grid { gap:9px; }
     #menu article { border-radius:13px; }
@@ -403,7 +413,7 @@
       <div className="gutter mx-auto flex max-w-7xl items-center justify-between gap-2 py-3">
         <a href="#home" onClick=${(e) => go(e, 'home')} className="flex items-center gap-3" aria-label="Smuff Bakers home">
           <img src="assets/logo.png" alt="Smuff Bakers logo" width="52" height="52" className="h-[52px] w-[52px] rounded-full ring-1 ring-caramel/40" />
-          <span className="hidden font-display text-2xl font-semibold tracking-wide text-cream sm:block">Smuff<span className="text-caramel">.pk</span></span>
+          <span className="font-display text-xl font-semibold tracking-wide text-cream">Smuff<span className="text-caramel"> Bakers</span></span>
         </a>
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
           ${NAV.map((n) => html`<a key=${n.id} href=${'#' + n.id} className="nav-link" aria-current=${active === n.id ? 'true' : 'false'} onClick=${(e) => go(e, n.id)}>${n.label}</a>`)}
@@ -430,7 +440,7 @@
     return html`<section id="home" className="hero relative overflow-hidden">
       <div className="drip"></div>
       <div className="gutter relative z-[2] mx-auto grid max-w-7xl items-center gap-6 pb-16 pt-24 md:grid-cols-[1.05fr_.95fr] md:gap-10 md:pb-24 md:pt-32">
-        <div className="min-w-0">
+        <div className="hero-copy min-w-0">
           <p className="eyebrow rise">Cinnabons · Brookies · Desserts</p>
           <h1 className="script rise rise-2 mt-3 text-[clamp(3.6rem,11vw,7.2rem)] text-cream" style=${{ textShadow: '0 4px 40px rgba(217,160,91,.25)' }}>
             Smuff Bakers <${Icon} name="heart" size=${44} className="-mt-3 inline text-caramel-light" />
@@ -444,7 +454,7 @@
             <a href=${generalLink()} target="_blank" rel="noopener" className="btn-ghost px-7 py-3.5 text-base"><${Icon} name="whatsapp" size=${19} /> Order on WhatsApp</a>
           </div>
         </div>
-        <div className="relative mx-auto w-full max-w-[560px] min-w-0">
+        <div className="hero-art relative mx-auto w-full max-w-[560px] min-w-0">
           <div className="absolute inset-[8%] rounded-full bg-caramel/25 blur-3xl"></div>
           <img src="assets/hero-brownies.jpg" alt="Stacked fudgy brownies dripping with chocolate" className="hero-img relative w-full" width="900" height="784" />
           <p className="script absolute -bottom-2 right-0 -rotate-6 text-4xl text-caramel-light sm:text-5xl">Baked<br />with Love</p>
@@ -456,6 +466,7 @@
   function Categories({ filter, onPick }) {
     return html`<section aria-label="Categories" className="bg-cocoa-950 pb-6">
       <div className="gutter mx-auto max-w-7xl">
+        <div className="mb-5 flex items-center gap-3"><span className="hairline"></span><h2 className="section-title whitespace-nowrap">Our Categories</h2><span className="hairline"></span></div>
         <div className="category-grid">
           ${CATEGORIES.slice(0,6).map((c) => html`<button key=${c.name} className="category-card" aria-pressed=${filter === c.name} onClick=${() => onPick(c.name)}>
             <img src=${c.image} alt=${c.name} loading="lazy" />
