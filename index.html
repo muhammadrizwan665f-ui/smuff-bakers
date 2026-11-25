@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Order freshly baked brownies, cakes, cookies and desserts from Smuff Bakers on WhatsApp.">
+<meta name="theme-color" content="#120905">
 <meta name="claude:viewport-fit-sides" content="cover">
-<title>Smuff Bakers</title>
+<title>Smuff Bakers | Freshly Baked Desserts</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Jost:wght@400;500;600&display=swap">
@@ -208,6 +210,39 @@
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
+
+  /* Reference-inspired mobile storefront */
+  .category-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+  .category-card { position:relative; min-width:0; aspect-ratio:1/1; overflow:hidden; border:1px solid rgba(217,160,91,.38); border-radius:14px; background:#26150d; color:var(--cream); }
+  .category-card img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .45s ease; }
+  .category-card::after { content:""; position:absolute; inset:35% 0 0; background:linear-gradient(transparent,rgba(12,6,3,.88)); }
+  .category-card span { position:absolute; z-index:1; left:4px; right:4px; bottom:8px; text-align:center; font-weight:600; font-size:clamp(11px,3vw,15px); text-shadow:0 2px 6px #000; }
+  .category-card[aria-pressed="true"] { outline:2px solid var(--caramel-light); outline-offset:2px; }
+  .mobile-bottom-nav { display:none; }
+  @media (max-width: 640px) {
+    body { padding-bottom:calc(66px + env(safe-area-inset-bottom,0px)); }
+    .gutter { padding-left:12px; padding-right:12px; }
+    .hero .gutter { padding-top:76px; padding-bottom:38px; }
+    .hero .gutter > div:first-child h1 { font-size:clamp(3rem,14vw,4.5rem); }
+    .hero .gutter > div:last-child { max-width:360px; }
+    .hero-img { max-height:330px; object-fit:contain; }
+    .hero .gutter { gap:10px; }
+    .category-grid { gap:8px; }
+    #menu { padding-top:36px; padding-bottom:40px; }
+    #menu .mt-8.grid { gap:9px; }
+    #menu article { border-radius:13px; }
+    #menu article .flex.flex-1 { padding:9px; gap:8px; }
+    #menu article h3 { font-size:15px; }
+    #menu article p.font-display { font-size:17px; }
+    #menu article a { font-size:11px; padding:9px 5px; gap:5px; white-space:nowrap; }
+    .section-title { font-size:2.5rem; }
+    #gallery { padding-top:38px; padding-bottom:38px; }
+    .mobile-bottom-nav { position:fixed; z-index:70; inset:auto 0 0; display:grid; grid-template-columns:repeat(5,1fr); padding:7px 4px calc(7px + env(safe-area-inset-bottom,0px)); background:rgba(13,6,3,.97); border-top:1px solid rgba(217,160,91,.35); backdrop-filter:blur(14px); }
+    .mobile-bottom-nav a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:var(--cream); text-decoration:none; font-size:10px; line-height:1.2; }
+    .mobile-bottom-nav a:nth-child(3) { color:var(--caramel-light); }
+    .fab { right:12px; bottom:calc(78px + env(safe-area-inset-bottom,0px)); width:48px; height:48px; }
+  }
+
 </style>
 </head>
 <body>
@@ -225,9 +260,9 @@
   /* 1. SETTINGS. Change the WhatsApp number here, once. Use the international format, digits only
         (Pakistan: 92 + number without the leading 0, e.g. 0300 1234567 becomes 923001234567). */
   const CONFIG = {
-    brandName: 'Smuff.pk',
-    whatsappNumber: '923001234567',          // <-- replace with the real WhatsApp number
-    phoneDisplay: '+92 300 1234567',         // <-- shown in the footer, replace too
+    brandName: 'Smuff Bakers',
+    whatsappNumber: '923351222189',
+    phoneDisplay: '0335 1222189',
     instagram: 'https://www.instagram.com/smuff.pk/',
     facebook: 'https://www.facebook.com/',   // <-- replace with the Facebook page link
     tiktok: 'https://www.tiktok.com/',       // <-- replace with the TikTok profile link
@@ -262,11 +297,11 @@
   /* 4. INSTAGRAM GALLERY photos (8 fit the grid neatly). */
   const GALLERY = [
     { image: 'assets/cookie.jpg',           alt: 'Chocolate chip cookie broken open' },
-    { image: 'assets/box-table.jpg',        alt: 'Smuff.pk dessert boxes on a table' },
+    { image: 'assets/box-table.jpg',        alt: 'Smuff Bakers dessert boxes on a table' },
     { image: 'assets/chocolate-bar.jpg',    alt: 'Chocolate slab with a ribbed drizzle' },
     { image: 'assets/nutella-bowl.jpg',     alt: 'Bowl of Nutella dessert' },
     { image: 'assets/ingredients.jpg',      alt: 'Dessert ingredients and toppings' },
-    { image: 'assets/gift-bag.jpg',         alt: 'Smuff.pk paper gift bag' },
+    { image: 'assets/gift-bag.jpg',         alt: 'Smuff Bakers paper gift bag' },
     { image: 'assets/banana-bread.jpg',     alt: 'Sliced banana bread' },
     { image: 'assets/brownie-roll-box.jpg', alt: 'Box of brownies and cinnamon rolls' }
   ];
@@ -282,8 +317,8 @@
   /* Helpers (no need to edit) */
   const formatPrice = (n) => CONFIG.currency + ' ' + Number(n).toLocaleString('en-US');
   const waLink = (message) => 'https://wa.me/' + CONFIG.whatsappNumber + '?text=' + encodeURIComponent(message);
-  const orderLink = (p) => waLink('Hi Smuff.pk! I would like to order: ' + p.name + ' (' + formatPrice(p.price) + '). Please share availability and delivery details.');
-  const generalLink = () => waLink('Hi Smuff.pk! I would like to place an order.');
+  const orderLink = (p) => waLink('Hi Smuff Bakers! I would like to order: ' + p.name + ' (' + formatPrice(p.price) + '). Please share availability and delivery details.');
+  const generalLink = () => waLink('Hi Smuff Bakers! I would like to place an order.');
 </script>
 
 <!-- =====================================================================
@@ -365,16 +400,16 @@
     const [open, setOpen] = useState(false);
     const go = (e, id) => { setOpen(false); scrollToId(e, id); };
     return html`<header className="sticky z-50 border-b border-caramel/15 bg-[#150a05]/90 backdrop-blur-md" style=${{ top: 'env(safe-area-inset-top, 0px)' }}>
-      <div className="gutter mx-auto flex max-w-7xl items-center justify-between gap-4 py-3">
-        <a href="#home" onClick=${(e) => go(e, 'home')} className="flex items-center gap-3" aria-label="Smuff.pk home">
-          <img src="assets/logo.png" alt="Smuff.pk logo" width="52" height="52" className="h-[52px] w-[52px] rounded-full ring-1 ring-caramel/40" />
+      <div className="gutter mx-auto flex max-w-7xl items-center justify-between gap-2 py-3">
+        <a href="#home" onClick=${(e) => go(e, 'home')} className="flex items-center gap-3" aria-label="Smuff Bakers home">
+          <img src="assets/logo.png" alt="Smuff Bakers logo" width="52" height="52" className="h-[52px] w-[52px] rounded-full ring-1 ring-caramel/40" />
           <span className="hidden font-display text-2xl font-semibold tracking-wide text-cream sm:block">Smuff<span className="text-caramel">.pk</span></span>
         </a>
         <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
           ${NAV.map((n) => html`<a key=${n.id} href=${'#' + n.id} className="nav-link" aria-current=${active === n.id ? 'true' : 'false'} onClick=${(e) => go(e, n.id)}>${n.label}</a>`)}
         </nav>
         <div className="flex items-center gap-3">
-          <a href=${generalLink()} target="_blank" rel="noopener" className="btn-gold hidden px-5 py-2.5 text-sm sm:inline-flex">
+          <a href=${generalLink()} target="_blank" rel="noopener" className="btn-gold inline-flex px-3 py-2 text-[11px] sm:px-5 sm:py-2.5 sm:text-sm">
             <${Icon} name="whatsapp" size=${18} /> Order on WhatsApp
           </a>
           <button className="grid h-11 w-11 place-items-center rounded-full border border-caramel/40 text-cream md:hidden" aria-label=${open ? 'Close menu' : 'Open menu'} aria-expanded=${open} onClick=${() => setOpen(!open)}>
@@ -398,7 +433,7 @@
         <div className="min-w-0">
           <p className="eyebrow rise">Cinnabons · Brookies · Desserts</p>
           <h1 className="script rise rise-2 mt-3 text-[clamp(3.6rem,11vw,7.2rem)] text-cream" style=${{ textShadow: '0 4px 40px rgba(217,160,91,.25)' }}>
-            Sami's<br />Sinful Bakes <${Icon} name="heart" size=${44} className="-mt-3 inline text-caramel-light" />
+            Smuff Bakers <${Icon} name="heart" size=${44} className="-mt-3 inline text-caramel-light" />
           </h1>
           <p className="rise rise-3 mt-4 font-display text-2xl italic text-caramel-light sm:text-3xl">Life is sweeter with our bakes.</p>
           <p className="rise rise-3 mt-4 max-w-xl text-[17px] text-cream-dim">
@@ -421,10 +456,10 @@
   function Categories({ filter, onPick }) {
     return html`<section aria-label="Categories" className="bg-cocoa-950 pb-6">
       <div className="gutter mx-auto max-w-7xl">
-        <div className="hide-scroll -mt-2 flex snap-x gap-5 overflow-x-auto rounded-3xl border border-caramel/20 bg-gradient-to-b from-cocoa-800/80 to-cocoa-900/80 px-6 py-6 md:justify-between">
-          ${CATEGORIES.map((c) => html`<button key=${c.name} className="cat-btn flex shrink-0 snap-start flex-col items-center gap-3" aria-pressed=${filter === c.name} onClick=${() => onPick(c.name)}>
-            <span className="cat-ring block"><img src=${c.image} alt="" width="84" height="84" className="h-[72px] w-[72px] rounded-full object-cover sm:h-[84px] sm:w-[84px]" /></span>
-            <span className="cat-name text-sm font-medium text-cream">${c.name}</span>
+        <div className="category-grid">
+          ${CATEGORIES.slice(0,6).map((c) => html`<button key=${c.name} className="category-card" aria-pressed=${filter === c.name} onClick=${() => onPick(c.name)}>
+            <img src=${c.image} alt=${c.name} loading="lazy" />
+            <span>${c.name}</span>
           </button>`)}
         </div>
       </div>
@@ -502,7 +537,7 @@
     return html`<section id="about" className="bg-cocoa-950 py-16 md:py-24">
       <div className="gutter mx-auto grid max-w-7xl items-center gap-12 md:grid-cols-2">
         <div className="relative mx-auto w-full max-w-[520px] min-w-0 pb-12 pr-8 md:mx-0">
-          <img src="assets/about.jpg" alt="Smuff.pk cookie with logo" loading="lazy" className="w-full rounded-[2rem] border border-caramel/30 shadow-2xl" />
+          <img src="assets/about.jpg" alt="Smuff Bakers cookie with logo" loading="lazy" className="w-full rounded-[2rem] border border-caramel/30 shadow-2xl" />
           <img src="assets/ingredients.jpg" alt="Dessert toppings and ingredients" loading="lazy" className="absolute bottom-0 right-0 w-[46%] rounded-2xl border-4 border-cocoa-950 shadow-2xl lift" />
           <p className="script absolute -left-1 top-3 -rotate-6 rounded-full bg-cocoa-950/70 px-4 py-1 text-3xl text-caramel-light backdrop-blur">Made with love</p>
         </div>
@@ -510,7 +545,7 @@
           <p className="eyebrow">About our bakery</p>
           <h2 className="section-title mt-2">A Little Love in Every Bite</h2>
           <p className="mt-5 text-[17px] text-cream-dim">
-            It started with one simple idea: dessert should feel like a small celebration. At Sami's Sinful Bakes we bake in small batches with quality ingredients, rich chocolate and a lot of patience, so every brownie is fudgy, every roll is gooey and every cake is worth the wait.
+            It started with one simple idea: dessert should feel like a small celebration. At Smuff Bakers we bake in small batches with quality ingredients, rich chocolate and a lot of patience, so every brownie is fudgy, every roll is gooey and every cake is worth the wait.
           </p>
           <p className="mt-4 text-[17px] text-cream-dim">
             Whether it is a birthday, a gift or a late night craving, we pack each box with care and bring it to your door.
@@ -570,7 +605,7 @@
     return html`<footer className="border-t border-caramel/15 bg-[#0d0603]">
       <div className="gutter mx-auto grid max-w-7xl gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.2fr_1fr]">
         <div className="min-w-0">
-          <img src="assets/logo.png" alt="Smuff.pk logo" width="88" height="88" className="h-[88px] w-[88px] rounded-full ring-1 ring-caramel/40" />
+          <img src="assets/logo.png" alt="Smuff Bakers logo" width="88" height="88" className="h-[88px] w-[88px] rounded-full ring-1 ring-caramel/40" />
           <p className="script mt-4 text-4xl text-caramel-light">Sweetness in Every Bite <${Icon} name="heart" size=${26} className="inline" /></p>
         </div>
         <div>
@@ -596,7 +631,7 @@
       </div>
       <div className="border-t border-caramel/10">
         <div className="gutter mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 py-5 text-sm text-cream-dim">
-          <span>© ${new Date().getFullYear()} Smuff.pk. All rights reserved.</span>
+          <span>© ${new Date().getFullYear()} Smuff Bakers. All rights reserved.</span>
           <span className="flex items-center gap-1.5">Made with <${Icon} name="heart" size=${15} className="text-caramel" /> in Pakistan</span>
         </div>
       </div>
@@ -617,13 +652,20 @@
       <main>
         <${Hero} />
         <${Categories} filter=${filter} onPick=${pickCategory} />
-        <${Gallery} />
         <${Menu} filter=${filter} setFilter=${setFilter} />
+        <${Gallery} />
         <${About} />
         <${Reviews} />
         <${CTA} />
       </main>
       <${Footer} />
+      <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
+        <a href="#home" onClick=${(e) => scrollToId(e, "home")}><${Icon} name="heart" size=${20} /><span>Home</span></a>
+        <a href="#menu" onClick=${(e) => scrollToId(e, "menu")}><${Icon} name="menu" size=${20} /><span>Menu</span></a>
+        <a href=${generalLink()} target="_blank" rel="noopener"><${Icon} name="whatsapp" size=${22} /><span>Order</span></a>
+        <a href="#reviews" onClick=${(e) => scrollToId(e, "reviews")}><${Icon} name="star" size=${20} /><span>Reviews</span></a>
+        <a href="#contact" onClick=${(e) => scrollToId(e, "contact")}><${Icon} name="truck" size=${20} /><span>Contact</span></a>
+      </nav>
       <a href=${generalLink()} target="_blank" rel="noopener" className="fab" aria-label="Order on WhatsApp"><${Icon} name="whatsapp" size=${28} /></a>
     </div>`;
   }
